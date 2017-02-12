@@ -8,7 +8,7 @@
 
 	<title>{include title}{if 'overview' !== $active && $config->title} | {$config->title}{/if}</title>
 
-	<link rel="stylesheet" href="{='resources/bootstrap.min.css'|staticFile}">
+	{*<link rel="stylesheet" href="{='resources/bootstrap.min.css'|staticFile}">*}
 	<link rel="stylesheet" href="{='resources/style.css'|staticFile}">
 	<link n:if="$config->googleCseId" rel="search" type="application/opensearchdescription+xml" title="{$config->title}" href="{$config->baseUrl}/opensearch.xml">
 
@@ -24,37 +24,37 @@
 </head>
 
 <body>
-	<nav id="navigation" class="navbar">
-        <div class="navbar-header">
-            <a href="index.html" class="navbar-brand">{if $config->title}{$config->title}{else}Overview{/if}</a>
+	<nav class="navbar">
+        <div class="navbar-brand">
+            <a href="index.html">{if $config->title}{$config->title}{else}Overview{/if}</a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li n:class="'package' === $active ? active" n:if="$packages">
-                    <a n:tag-if="'package' !== $active && $package" href="{$package|packageUrl}" title="Summary of {$package}"><span>Package</span></a>
+                <li n:class="nav-item,'package' === $active ? active" n:if="$packages">
+                    <a n:tag-if="'package' !== $active && $package" href="{$package|packageUrl}" class="nav-link" title="Summary of {$package}"><span>Package</span></a>
                 </li>
-                <li n:class="'namespace' === $active ? active" n:if="$namespaces">
-                    <a n:tag-if="'namespace' !== $active && $namespace" href="{$namespace|namespaceUrl}" title="Summary of {$namespace}"><span>Namespace</span></a>
+                <li n:class="nav-item,'namespace' === $active ? active" n:if="$namespaces">
+                    <a n:tag-if="'namespace' !== $active && $namespace" href="{$namespace|namespaceUrl}" class="nav-link" title="Summary of {$namespace}"><span>Namespace</span></a>
                 </li>
-                <li n:class="'class' === $active ? active" n:if="!$function && !$constant">
-                    <a n:tag-if="'class' !== $active && $class" href="{$class|classUrl}" title="Summary of {$class->name}"><span>Class</span></a>
+                <li n:class="nav-item,'class' === $active ? active" n:if="!$function && !$constant">
+                    <a n:tag-if="'class' !== $active && $class" href="{$class|classUrl}" class="nav-link" title="Summary of {$class->name}"><span>Class</span></a>
                 </li>
-                <li n:class="'function' === $active ? active" n:if="$function">
-                    <a n:tag-if="'function' !== $active" href="{$function|functionUrl}" title="Summary of {$function->name}"><span>Function</span></a>
+                <li n:class="nav-item,'function' === $active ? active" n:if="$function">
+                    <a n:tag-if="'function' !== $active" href="{$function|functionUrl}" class="nav-link" title="Summary of {$function->name}"><span>Function</span></a>
                 </li>
-                <li n:class="'constant' === $active ? active" n:if="$constant">
-                    <a n:tag-if="'constant' !== $active" href="{$constant|constantUrl}" title="Summary of {$constant->name}"><span>Constant</span></a>
+                <li n:class="nav-item,'constant' === $active ? active" n:if="$constant">
+                    <a n:tag-if="'constant' !== $active" href="{$constant|constantUrl}" class="nav-link" title="Summary of {$constant->name}"><span>Constant</span></a>
                 </li>
 
                 <li class="divider-vertical" n:if="$config->tree || $config->deprecated || $config->todo"></li>
 
-                <li n:class="'tree' === $active ? active" n:if="$config->tree">
-                    <a n:tag-if="'tree' !== $active" href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+                <li n:class="nav-item,'tree' === $active ? active" n:if="$config->tree">
+                    <a n:tag-if="'tree' !== $active" href="tree.html" class="nav-link" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
                 </li>
 
                 {foreach $annotationGroups as $annotation}
-                    <li n:class="$active === 'annotation-group-' . $annotation ? active">
-                        <a n:tag-if="$active !== 'annotation-group-' . $annotation" href="annotation-group-{$annotation}.html" title="List of elements with {$annotation} annotation">
+                    <li n:class="nav-item,$active === 'annotation-group-' . $annotation ? active">
+                        <a n:tag-if="$active !== 'annotation-group-' . $annotation" href="annotation-group-{$annotation}.html" class="nav-link" title="List of elements with {$annotation} annotation">
                             <span>{$annotation|firstUpper}</span>
                         </a>
                     </li>
@@ -62,8 +62,8 @@
 
                 <li class="divider-vertical" n:if="$config->download"></li>
 
-                <li n:if="$config->download">
-                    <a href="{$archive}" title="Download documentation as ZIP archive"><span>Download</span></a>
+                <li n:if="$config->download" class="nav-item">
+                    <a href="{$archive}" class="nav-link" title="Download documentation as ZIP archive"><span>Download</span></a>
                 </li>
             </ul>
         </div>
@@ -73,7 +73,7 @@
 		<form{if $config->googleCseId} action="http://www.google.com/cse"{/if} id="search" role="search">
 			<input type="hidden" name="cx" value="{$config->googleCseId}">
 			<input type="hidden" name="ie" value="UTF-8">
-			<input type="text" name="q" class="search-query" placeholder="Search"{if 'overview' === $active} autofocus{/if}>
+			<input type="text" name="q" size="8" class="search-query" placeholder="Search"{if 'overview' === $active} autofocus{/if}>
 		</form>
 
 		<div id="menu">
@@ -108,9 +108,7 @@
 		</div>
 
 		{define elements}
-			<ul>
-				<li n:foreach="$elements as $element" n:class="$activeElement === $element ? active"><a n:class="$element->deprecated ? deprecated, !$element->valid ? invalid" href="{$element|elementUrl}">{if $namespace}{$element->shortName}{else}{$element->name}{/if}</a></li>
-			</ul>
+			<ul><li n:foreach="$elements as $element" n:class="$activeElement === $element ? active"><a n:class="$element->deprecated ? deprecated, !$element->valid ? invalid" href="{$element|elementUrl}">{if $namespace}{$element->shortName}{else}{$element->name}{/if}</a></li></ul>
 		{/define}
 
 		<div id="elements">
@@ -148,13 +146,11 @@
 </aside>
 
 <div id="right">
-	<div id="rightInner">
-	{include content}
-	</div>
+    {include content}
 
-	<div id="footer">
+	<footer class="article-actions">
 		{$config->title} API documentation generated by <a href="http://apigen.org">ApiGen</a>
-	</div>
+	</footer>
 </div>
 
     <div id="assets" aria-hidden="true">
